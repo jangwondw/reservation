@@ -52,6 +52,27 @@ function getLinksByCategory(links: ReservationLink[]) {
     .filter((group) => group.links.length > 0);
 }
 
+function formatRemainingLabel(event: UpcomingOpen, now: Date) {
+  if (event.isOpen) {
+    return "오픈 중";
+  }
+
+  const totalMinutes = Math.max(0, Math.ceil((event.opensAt.getTime() - now.getTime()) / 60000));
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) {
+    return `${days}일 ${hours}시간 ${minutes}분 남음`;
+  }
+
+  if (hours > 0) {
+    return `${hours}시간 ${minutes}분 남음`;
+  }
+
+  return `${minutes}분 남음`;
+}
+
 function App() {
   const [now, setNow] = useState(() => new Date());
   const [expandedVenueId, setExpandedVenueId] = useState(venues[0]?.id ?? "");
@@ -156,29 +177,6 @@ function App() {
         </div>
       </section>
 
-      <section className="section-block" aria-label="곧 열리는 예약">
-        <div className="section-heading">
-          <h2>곧 열림</h2>
-        </div>
-        <ol className="section-list">
-          {upcomingOpens.slice(1, 5).map((event) => (
-            <li key={event.id} className="schedule-card">
-              <span className="schedule-info">
-                <span className="venue-area">
-                  <Clock aria-hidden="true" size={14} />
-                  {event.rule.targetPeriod ?? event.rule.label}
-                </span>
-                <strong>{event.venue.name}</strong>
-                <time>{formatDateTime(event.opensAt)}</time>
-              </span>
-              <span className={event.isOpen ? "schedule-badge live-badge" : "schedule-badge"}>
-                {event.isOpen ? "오픈" : formatCountdown(event.opensAt, now, event.isOpen)}
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
-
       <section className="section-block" aria-label="장소별 예약">
         <div className="section-heading">
           <h2>장소별 예약</h2>
@@ -219,10 +217,9 @@ function VenueAccordion({ venue, now, isExpanded, onToggle }: VenueAccordionProp
             {venue.area}
           </span>
           <strong>{venue.name}</strong>
-          <time>{formatDateTime(nextOpen.opensAt)}</time>
         </span>
         <span className="venue-countdown">
-          <span>{formatCountdown(nextOpen.opensAt, now, nextOpen.isOpen)}</span>
+          <span>{formatRemainingLabel(nextOpen, now)}</span>
           <ChevronDown aria-hidden="true" size={20} />
         </span>
       </button>

@@ -211,18 +211,6 @@ h1 {
   list-style: none;
 }
 
-.schedule-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 88px;
-  padding: 14px;
-  border: 1px solid var(--app-line);
-  border-radius: 8px;
-  background: var(--app-card);
-}
-
 .venue-accordion {
   overflow: hidden;
 }
@@ -238,9 +226,9 @@ h1 {
   cursor: pointer;
 }
 
-.schedule-info,
 .venue-info {
   display: grid;
+  flex: 1;
   min-width: 0;
   gap: 4px;
 }
@@ -254,45 +242,26 @@ h1 {
   font-weight: 850;
 }
 
-.schedule-info strong,
 .venue-info strong {
   font-size: 1.04rem;
   line-height: 1.25;
 }
 
-.schedule-info time,
-.venue-info time {
-  color: #687281;
-  font-size: 0.8rem;
-  font-weight: 800;
-}
-
-.schedule-badge,
 .venue-countdown {
-  display: grid;
-  justify-items: end;
-  gap: 6px;
-  min-width: 96px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  flex: 0 0 auto;
   color: var(--app-blue);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 950;
   text-align: right;
 }
 
-.schedule-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 86px;
-  min-height: 34px;
-  padding: 0 9px;
-  border-radius: 999px;
-  background: var(--app-blue-soft);
-}
-
-.live-badge {
-  background: #fff0ef;
-  color: #df5650;
+.venue-countdown span {
+  line-height: 1.28;
+  white-space: nowrap;
 }
 
 .venue-toggle[aria-expanded="true"] .venue-countdown svg {
@@ -413,6 +382,7 @@ h1 {
 
   .venue-countdown {
     justify-items: start;
+    justify-content: flex-start;
     text-align: left;
   }
 }
