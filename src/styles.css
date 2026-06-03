@@ -1,6 +1,14 @@
 :root {
-  color: #18201c;
-  background: #eef2ed;
+  color: #15191f;
+  background: #f4f6f8;
+  --app-bg: #f4f6f8;
+  --app-card: #ffffff;
+  --app-line: #edf0f3;
+  --app-muted: #9aa1ad;
+  --app-text: #15191f;
+  --app-blue: #1687ff;
+  --app-blue-soft: #eef6ff;
+  --app-chip: #eef1f5;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
@@ -49,14 +57,14 @@ p {
 .hero-card,
 .section-block,
 .venue-accordion {
-  border: 1px solid #dbe2dc;
+  border: 1px solid var(--app-line);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--app-card);
 }
 
 .hero-card {
   padding: 18px;
-  box-shadow: 0 14px 38px rgba(24, 32, 28, 0.08);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.1);
 }
 
 .hero-top,
@@ -71,7 +79,7 @@ p {
 
 .section-label {
   margin: 0;
-  color: #64706a;
+  color: #687281;
   font-size: 0.82rem;
   font-weight: 900;
 }
@@ -81,10 +89,10 @@ p {
   align-items: center;
   min-height: 28px;
   padding: 0 10px;
-  border: 1px solid #cbdcd3;
+  border: 1px solid #d7e9ff;
   border-radius: 999px;
-  background: #eef8f3;
-  color: #126b59;
+  background: var(--app-blue-soft);
+  color: var(--app-blue);
   font-size: 0.78rem;
   font-weight: 950;
 }
@@ -107,7 +115,7 @@ h1 {
   align-items: center;
   gap: 10px;
   margin-top: 16px;
-  color: #126b59;
+  color: var(--app-blue);
 }
 
 .countdown strong {
@@ -126,20 +134,20 @@ h1 {
 .hero-details div {
   min-width: 0;
   padding: 12px;
-  border: 1px solid #e7ebe6;
+  border: 1px solid var(--app-line);
   border-radius: 8px;
-  background: #f8faf7;
+  background: var(--app-bg);
 }
 
 .hero-details dt {
-  color: #64706a;
+  color: #687281;
   font-size: 0.76rem;
   font-weight: 850;
 }
 
 .hero-details dd {
   margin: 5px 0 0;
-  color: #18201c;
+  color: var(--app-text);
   font-size: 1rem;
   font-weight: 900;
   line-height: 1.28;
@@ -147,8 +155,7 @@ h1 {
 
 .quick-action-list,
 .utility-row,
-.timeline-list,
-.venue-stack,
+.section-list,
 .reservation-list {
   display: grid;
   gap: 9px;
@@ -169,10 +176,10 @@ h1 {
   justify-content: center;
   gap: 8px;
   min-height: 48px;
-  border: 1px solid #d8dfd8;
+  border: 1px solid var(--app-line);
   border-radius: 8px;
-  background: #ffffff;
-  color: #1f2924;
+  background: var(--app-card);
+  color: var(--app-text);
   font-weight: 900;
   cursor: pointer;
 }
@@ -198,58 +205,22 @@ h1 {
   letter-spacing: 0;
 }
 
-.timeline-list {
+.section-list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.timeline-list li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: 10px;
-  row-gap: 3px;
-  padding: 11px 0;
-  border-top: 1px solid #edf0eb;
-}
-
-.timeline-list li:first-child {
-  border-top: 0;
-}
-
-.timeline-marker {
-  width: 9px;
-  height: 9px;
-  margin-top: 6px;
-  border-radius: 50%;
-  background: #126b59;
-}
-
-.timeline-list strong,
-.timeline-list span,
-.timeline-list time {
-  display: block;
-}
-
-.timeline-list strong {
-  font-size: 0.94rem;
-  line-height: 1.28;
-}
-
-.timeline-list span,
-.timeline-list time {
-  color: #64706a;
-  font-size: 0.8rem;
-  font-weight: 800;
-  line-height: 1.32;
-}
-
-.timeline-list time {
-  grid-column: 2;
-}
-
-.venue-stack {
-  gap: 10px;
+.schedule-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 88px;
+  padding: 14px;
+  border: 1px solid var(--app-line);
+  border-radius: 8px;
+  background: var(--app-card);
 }
 
 .venue-accordion {
@@ -261,12 +232,13 @@ h1 {
   min-height: 88px;
   padding: 14px;
   border: 0;
-  background: #ffffff;
-  color: #18201c;
+  background: var(--app-card);
+  color: var(--app-text);
   text-align: left;
   cursor: pointer;
 }
 
+.schedule-info,
 .venue-info {
   display: grid;
   min-width: 0;
@@ -277,31 +249,50 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: #64706a;
+  color: #687281;
   font-size: 0.78rem;
   font-weight: 850;
 }
 
+.schedule-info strong,
 .venue-info strong {
   font-size: 1.04rem;
   line-height: 1.25;
 }
 
+.schedule-info time,
 .venue-info time {
-  color: #64706a;
+  color: #687281;
   font-size: 0.8rem;
   font-weight: 800;
 }
 
+.schedule-badge,
 .venue-countdown {
   display: grid;
   justify-items: end;
   gap: 6px;
   min-width: 96px;
-  color: #126b59;
+  color: var(--app-blue);
   font-size: 0.88rem;
   font-weight: 950;
   text-align: right;
+}
+
+.schedule-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 86px;
+  min-height: 34px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: var(--app-blue-soft);
+}
+
+.live-badge {
+  background: #fff0ef;
+  color: #df5650;
 }
 
 .venue-toggle[aria-expanded="true"] .venue-countdown svg {
@@ -330,10 +321,10 @@ h1 {
   gap: 6px;
   min-height: 30px;
   padding: 0 10px;
-  border: 1px solid #eadcc1;
+  border: 1px solid #dbe8f8;
   border-radius: 999px;
-  background: #fffaf0;
-  color: #6d4a10;
+  background: var(--app-blue-soft);
+  color: var(--app-blue);
   font-size: 0.8rem;
   font-weight: 850;
 }
@@ -345,7 +336,7 @@ h1 {
 
 .link-group h3 {
   margin: 0;
-  color: #64706a;
+  color: #687281;
   font-size: 0.82rem;
   font-weight: 950;
   letter-spacing: 0;
@@ -354,10 +345,10 @@ h1 {
 .reservation-link {
   min-height: 58px;
   padding: 10px 12px;
-  border: 1px solid #e2e7e1;
+  border: 1px solid var(--app-line);
   border-radius: 8px;
-  background: #fafcf9;
-  color: #18201c;
+  background: var(--app-bg);
+  color: var(--app-text);
   font-weight: 900;
 }
 
@@ -374,8 +365,8 @@ h1 {
 }
 
 .dark-link {
-  border-color: #18201c;
-  background: #18201c;
+  border-color: var(--app-blue);
+  background: var(--app-blue);
   color: #ffffff;
 }
 
@@ -384,20 +375,20 @@ h1 {
   min-height: 22px;
   padding: 3px 7px;
   border-radius: 999px;
-  background: #eef1ee;
-  color: #56625c;
+  background: var(--app-chip);
+  color: #687281;
   font-size: 0.72rem;
   font-weight: 950;
 }
 
 .source-seoul {
-  background: #eef4ff;
-  color: #315eab;
+  background: var(--app-blue-soft);
+  color: #3479f6;
 }
 
 .source-naver {
-  background: #eaf8ec;
-  color: #0c7f38;
+  background: #f0f5ff;
+  color: #4a7fd9;
 }
 
 .source-gangdong {

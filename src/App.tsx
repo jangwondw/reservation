@@ -160,34 +160,41 @@ function App() {
         <div className="section-heading">
           <h2>곧 열림</h2>
         </div>
-        <ol className="timeline-list">
+        <ol className="section-list">
           {upcomingOpens.slice(1, 5).map((event) => (
-            <li key={event.id}>
-              <div className="timeline-marker" aria-hidden="true" />
-              <div>
+            <li key={event.id} className="schedule-card">
+              <span className="schedule-info">
+                <span className="venue-area">
+                  <Clock aria-hidden="true" size={14} />
+                  {event.rule.targetPeriod ?? event.rule.label}
+                </span>
                 <strong>{event.venue.name}</strong>
-                <span>{event.rule.targetPeriod ?? event.rule.label}</span>
-              </div>
-              <time>{formatDateTime(event.opensAt)}</time>
+                <time>{formatDateTime(event.opensAt)}</time>
+              </span>
+              <span className={event.isOpen ? "schedule-badge live-badge" : "schedule-badge"}>
+                {event.isOpen ? "오픈" : formatCountdown(event.opensAt, now, event.isOpen)}
+              </span>
             </li>
           ))}
         </ol>
       </section>
 
-      <section className="section-block venue-stack" aria-label="장소별 예약">
+      <section className="section-block" aria-label="장소별 예약">
         <div className="section-heading">
           <h2>장소별 예약</h2>
         </div>
 
-        {venues.map((venue) => (
-          <VenueAccordion
-            key={venue.id}
-            venue={venue}
-            now={now}
-            isExpanded={expandedVenueId === venue.id}
-            onToggle={() => setExpandedVenueId((current) => (current === venue.id ? "" : venue.id))}
-          />
-        ))}
+        <div className="section-list">
+          {venues.map((venue) => (
+            <VenueAccordion
+              key={venue.id}
+              venue={venue}
+              now={now}
+              isExpanded={expandedVenueId === venue.id}
+              onToggle={() => setExpandedVenueId((current) => (current === venue.id ? "" : venue.id))}
+            />
+          ))}
+        </div>
       </section>
     </main>
   );
