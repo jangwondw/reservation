@@ -75,7 +75,7 @@ function formatRemainingLabel(event: UpcomingOpen, now: Date) {
 
 function App() {
   const [now, setNow] = useState(() => new Date());
-  const [expandedVenueId, setExpandedVenueId] = useState(venues[0]?.id ?? "");
+  const [expandedVenueId, setExpandedVenueId] = useState("");
   const [notificationState, setNotificationState] = useState<NotificationState>(() => getNotificationState());
   const notifiedEventIds = useRef<Set<string>>(new Set());
 
@@ -87,10 +87,6 @@ function App() {
   const upcomingOpens = useMemo(() => getUpcomingOpens(venues, now), [now]);
   const primaryOpen = upcomingOpens[0];
   const primaryLinks = primaryOpen.venue.links;
-
-  useEffect(() => {
-    setExpandedVenueId(primaryOpen.venue.id);
-  }, [primaryOpen.venue.id]);
 
   useEffect(() => {
     if (notificationState !== "granted") {
