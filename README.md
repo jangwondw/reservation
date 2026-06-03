@@ -18,14 +18,12 @@ npm run build
 npx vercel --prod
 ```
 
-Supabase는 현재 앱에서는 필수 백엔드가 아닙니다. 추후 로그인, 공유 즐겨찾기, 예약 기록 저장을 붙일 때 `.env`에 `VITE_SUPABASE_URL`과 `VITE_SUPABASE_ANON_KEY`를 설정해 연결할 수 있습니다.
+Supabase는 현재 앱에서는 필수 백엔드가 아닙니다. 추후 로그인, 서버 저장, 푸시 알림을 붙일 때 `.env`에 `VITE_SUPABASE_URL`과 `VITE_SUPABASE_ANON_KEY`를 설정해 연결할 수 있습니다.
 
 ## 포함된 기능
 
 - 다음 예약 오픈 카운트다운
-- 장소/코트 유형 필터
+- 장소별 다음 예약 오픈 시간
 - 코트별 예약 링크
-- 즐겨찾기 저장
-- 장소별 개인 메모 저장
 - 캘린더 파일 다운로드
-- 브라우저 알림 권한 요청
+- 캘린더 10분 전/정시 알림 등록

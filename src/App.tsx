@@ -1,5 +1,5 @@
-import { Bell, BellOff, CalendarPlus, ChevronDown, Clock, ExternalLink, MapPin, Timer } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { CalendarPlus, ChevronDown, Clock, ExternalLink, MapPin, Timer } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { venues } from "./data";
 import {
   createCalendarFile,
@@ -9,8 +9,6 @@ import {
   getUpcomingOpens,
 } from "./dateUtils";
 import type { LinkCategory, ReservationLink, UpcomingOpen, Venue } from "./types";
-
-type NotificationState = "unsupported" | "default" | "granted" | "denied";
 
 const categoryLabels: Record<LinkCategory, string> = {
   general: "일반",
@@ -23,14 +21,6 @@ const sourceClassNames: Record<string, string> = {
   네이버: "source source-naver",
   강동구: "source source-gangdong",
 };
-
-function getNotificationState(): NotificationState {
-  if (!("Notification" in window)) {
-    return "unsupported";
-  }
-
-  return Notification.permission as NotificationState;
-}
 
 function downloadCalendar(event: UpcomingOpen) {
   const file = createCalendarFile(event);
@@ -73,17 +63,9 @@ function formatRemainingLabel(event: UpcomingOpen, now: Date) {
   return `${minutes}분 남음`;
 }
 
-function getStoredAlertEnabled() {
-  return window.localStorage.getItem("tennis.alertEnabled") === "true" && getNotificationState() === "granted";
-}
-
 function App() {
   const [now, setNow] = useState(() => new Date());
   const [expandedVenueId, setExpandedVenueId] = useState("");
-  const [notificationState, setNotificationState] = useState<NotificationState>(() => getNotificationState());
-  const [alertEnabled, setAlertEnabled] = useState(() => getStoredAlertEnabled());
-  const notificationTimeoutsRef = useRef<number[]>([]);
-  const activeNotificationsRef = useRef<Notification[]>([]);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
@@ -93,70 +75,6 @@ function App() {
   const upcomingOpens = useMemo(() => getUpcomingOpens(venues, now), [now]);
   const primaryOpen = upcomingOpens[0];
   const primaryLinks = primaryOpen.venue.links;
-  const primaryOpenTime = primaryOpen.opensAt.getTime();
-  const primaryOpenTarget = primaryOpen.rule.targetPeriod ?? primaryOpen.rule.label;
-
-  useEffect(() => {
-    window.localStorage.setItem("tennis.alertEnabled", String(alertEnabled));
-  }, [alertEnabled]);
-
-  useEffect(() => {
-    function clearScheduledNotifications() {
-      notificationTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
-      notificationTimeoutsRef.current = [];
-      activeNotificationsRef.current.forEach((notification) => notification.close());
-      activeNotificationsRef.current = [];
-    }
-
-    clearScheduledNotifications();
-
-    if (!alertEnabled || notificationState !== "granted" || primaryOpen.isOpen) {
-      return clearScheduledNotifications;
-    }
-
-    const reminderAt = primaryOpen.opensAt.getTime() - 10 * 60 * 1000;
-    const delay = Math.max(0, reminderAt - Date.now());
-    const timeoutId = window.setTimeout(() => {
-      const notification = new Notification(`${primaryOpen.venue.name} 예약 10분 전`, {
-        body: `${formatDateTime(new Date(primaryOpenTime))} 오픈 · ${primaryOpenTarget}`,
-      });
-
-      notification.onclick = () => window.focus();
-      activeNotificationsRef.current.push(notification);
-      notificationTimeoutsRef.current = notificationTimeoutsRef.current.filter((id) => id !== timeoutId);
-    }, delay);
-
-    notificationTimeoutsRef.current = [timeoutId];
-
-    return clearScheduledNotifications;
-  }, [
-    alertEnabled,
-    notificationState,
-    primaryOpen.id,
-    primaryOpen.isOpen,
-    primaryOpen.venue.name,
-    primaryOpenTime,
-    primaryOpenTarget,
-  ]);
-
-  async function toggleNotifications() {
-    if (alertEnabled) {
-      setAlertEnabled(false);
-      return;
-    }
-
-    if (!("Notification" in window)) {
-      setNotificationState("unsupported");
-      return;
-    }
-
-    const permission = await Notification.requestPermission();
-    setNotificationState(permission as NotificationState);
-
-    if (permission === "granted") {
-      setAlertEnabled(true);
-    }
-  }
 
   return (
     <main className="app-shell">
@@ -199,16 +117,7 @@ function App() {
         <div className="utility-row">
           <button className="utility-button" type="button" onClick={() => downloadCalendar(primaryOpen)}>
             <CalendarPlus aria-hidden="true" size={18} />
-            캘린더
-          </button>
-          <button
-            className={alertEnabled ? "utility-button utility-button-active" : "utility-button"}
-            type="button"
-            onClick={toggleNotifications}
-            disabled={notificationState === "denied" || notificationState === "unsupported"}
-          >
-            {alertEnabled ? <Bell aria-hidden="true" size={18} /> : <BellOff aria-hidden="true" size={18} />}
-            {alertEnabled ? "알림 켜짐" : "알림 꺼짐"}
+            캘린더 추가
           </button>
         </div>
       </section>
@@ -262,6 +171,11 @@ function VenueAccordion({ venue, now, isExpanded, onToggle }: VenueAccordionProp
 
       {isExpanded && (
         <div className="venue-content">
+          <button className="utility-button venue-calendar-button" type="button" onClick={() => downloadCalendar(nextOpen)}>
+            <CalendarPlus aria-hidden="true" size={18} />
+            캘린더 추가
+          </button>
+
           <div className="rule-row">
             {venue.openRules.map((rule) => (
               <span key={rule.id} className="rule-chip">
