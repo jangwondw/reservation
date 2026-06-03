@@ -171,11 +171,6 @@ function VenueAccordion({ venue, now, isExpanded, onToggle }: VenueAccordionProp
 
       {isExpanded && (
         <div className="venue-content">
-          <button className="utility-button venue-calendar-button" type="button" onClick={() => downloadCalendar(nextOpen)}>
-            <CalendarPlus aria-hidden="true" size={18} />
-            캘린더 추가
-          </button>
-
           <div className="rule-row">
             {venue.openRules.map((rule) => (
               <span key={rule.id} className="rule-chip">
@@ -196,6 +191,11 @@ function VenueAccordion({ venue, now, isExpanded, onToggle }: VenueAccordionProp
               </div>
             </div>
           ))}
+
+          <button className="utility-button venue-calendar-button" type="button" onClick={() => downloadCalendar(nextOpen)}>
+            <CalendarPlus aria-hidden="true" size={18} />
+            캘린더 추가
+          </button>
         </div>
       )}
     </article>
