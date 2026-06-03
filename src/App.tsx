@@ -86,7 +86,7 @@ function App() {
 
   const upcomingOpens = useMemo(() => getUpcomingOpens(venues, now), [now]);
   const primaryOpen = upcomingOpens[0];
-  const primaryLinks = primaryOpen.venue.links.slice(0, 3);
+  const primaryLinks = primaryOpen.venue.links;
 
   useEffect(() => {
     setExpandedVenueId(primaryOpen.venue.id);
