@@ -1,4 +1,4 @@
-import { Bell, CalendarPlus, ChevronDown, Clock, ExternalLink, MapPin, Timer } from "lucide-react";
+import { Bell, BellOff, CalendarPlus, ChevronDown, Clock, ExternalLink, MapPin, Timer } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { venues } from "./data";
 import {
@@ -73,11 +73,17 @@ function formatRemainingLabel(event: UpcomingOpen, now: Date) {
   return `${minutes}분 남음`;
 }
 
+function getStoredAlertEnabled() {
+  return window.localStorage.getItem("tennis.alertEnabled") === "true" && getNotificationState() === "granted";
+}
+
 function App() {
   const [now, setNow] = useState(() => new Date());
   const [expandedVenueId, setExpandedVenueId] = useState("");
   const [notificationState, setNotificationState] = useState<NotificationState>(() => getNotificationState());
-  const notifiedEventIds = useRef<Set<string>>(new Set());
+  const [alertEnabled, setAlertEnabled] = useState(() => getStoredAlertEnabled());
+  const notificationTimeoutsRef = useRef<number[]>([]);
+  const activeNotificationsRef = useRef<Notification[]>([]);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
@@ -87,28 +93,58 @@ function App() {
   const upcomingOpens = useMemo(() => getUpcomingOpens(venues, now), [now]);
   const primaryOpen = upcomingOpens[0];
   const primaryLinks = primaryOpen.venue.links;
+  const primaryOpenTime = primaryOpen.opensAt.getTime();
+  const primaryOpenTarget = primaryOpen.rule.targetPeriod ?? primaryOpen.rule.label;
 
   useEffect(() => {
-    if (notificationState !== "granted") {
+    window.localStorage.setItem("tennis.alertEnabled", String(alertEnabled));
+  }, [alertEnabled]);
+
+  useEffect(() => {
+    function clearScheduledNotifications() {
+      notificationTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+      notificationTimeoutsRef.current = [];
+      activeNotificationsRef.current.forEach((notification) => notification.close());
+      activeNotificationsRef.current = [];
+    }
+
+    clearScheduledNotifications();
+
+    if (!alertEnabled || notificationState !== "granted" || primaryOpen.isOpen) {
+      return clearScheduledNotifications;
+    }
+
+    const reminderAt = primaryOpen.opensAt.getTime() - 10 * 60 * 1000;
+    const delay = Math.max(0, reminderAt - Date.now());
+    const timeoutId = window.setTimeout(() => {
+      const notification = new Notification(`${primaryOpen.venue.name} 예약 10분 전`, {
+        body: `${formatDateTime(new Date(primaryOpenTime))} 오픈 · ${primaryOpenTarget}`,
+      });
+
+      notification.onclick = () => window.focus();
+      activeNotificationsRef.current.push(notification);
+      notificationTimeoutsRef.current = notificationTimeoutsRef.current.filter((id) => id !== timeoutId);
+    }, delay);
+
+    notificationTimeoutsRef.current = [timeoutId];
+
+    return clearScheduledNotifications;
+  }, [
+    alertEnabled,
+    notificationState,
+    primaryOpen.id,
+    primaryOpen.isOpen,
+    primaryOpen.venue.name,
+    primaryOpenTime,
+    primaryOpenTarget,
+  ]);
+
+  async function toggleNotifications() {
+    if (alertEnabled) {
+      setAlertEnabled(false);
       return;
     }
 
-    upcomingOpens.slice(0, 3).forEach((event) => {
-      const diff = event.opensAt.getTime() - now.getTime();
-      const isWithinWindow = diff > 0 && diff <= 10 * 60 * 1000;
-
-      if (!isWithinWindow || notifiedEventIds.current.has(event.id)) {
-        return;
-      }
-
-      new Notification(`${event.venue.name} 예약 오픈`, {
-        body: `${formatDateTime(event.opensAt)} · ${event.rule.targetPeriod ?? event.rule.label}`,
-      });
-      notifiedEventIds.current.add(event.id);
-    });
-  }, [notificationState, now, upcomingOpens]);
-
-  async function requestNotifications() {
     if (!("Notification" in window)) {
       setNotificationState("unsupported");
       return;
@@ -116,6 +152,10 @@ function App() {
 
     const permission = await Notification.requestPermission();
     setNotificationState(permission as NotificationState);
+
+    if (permission === "granted") {
+      setAlertEnabled(true);
+    }
   }
 
   return (
@@ -162,13 +202,13 @@ function App() {
             캘린더
           </button>
           <button
-            className="utility-button"
+            className={alertEnabled ? "utility-button utility-button-active" : "utility-button"}
             type="button"
-            onClick={requestNotifications}
+            onClick={toggleNotifications}
             disabled={notificationState === "denied" || notificationState === "unsupported"}
           >
-            <Bell aria-hidden="true" size={18} />
-            {notificationState === "granted" ? "알림 켜짐" : "알림"}
+            {alertEnabled ? <Bell aria-hidden="true" size={18} /> : <BellOff aria-hidden="true" size={18} />}
+            {alertEnabled ? "알림 켜짐" : "알림 꺼짐"}
           </button>
         </div>
       </section>

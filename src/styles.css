@@ -189,6 +189,12 @@ h1 {
   opacity: 0.52;
 }
 
+.utility-button-active {
+  border-color: var(--app-blue);
+  background: var(--app-blue);
+  color: #ffffff;
+}
+
 .section-block {
   margin-top: 12px;
   padding: 14px;

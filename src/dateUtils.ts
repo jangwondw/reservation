@@ -118,7 +118,6 @@ function escapeIcsText(value: string) {
 }
 
 export function createCalendarFile(event: UpcomingOpen) {
-  const reminder = new Date(event.opensAt.getTime() - 10 * 60 * 1000);
   const title = `${event.venue.name} 예약 오픈`;
   const description = `${event.rule.label}${event.rule.targetPeriod ? ` / ${event.rule.targetPeriod}` : ""}`;
   const uid = `${event.id}@tennis-reservation-links`;
@@ -130,14 +129,19 @@ export function createCalendarFile(event: UpcomingOpen) {
     "BEGIN:VEVENT",
     `UID:${uid}`,
     `DTSTAMP:${formatIcsDate(new Date())}`,
-    `DTSTART:${formatIcsDate(reminder)}`,
+    `DTSTART:${formatIcsDate(event.opensAt)}`,
     `DTEND:${formatIcsDate(event.closesAt)}`,
     `SUMMARY:${escapeIcsText(title)}`,
     `DESCRIPTION:${escapeIcsText(description)}`,
     "BEGIN:VALARM",
-    "TRIGGER:-PT0M",
+    "TRIGGER;RELATED=START:-PT10M",
     "ACTION:DISPLAY",
-    `DESCRIPTION:${escapeIcsText(title)}`,
+    `DESCRIPTION:${escapeIcsText(`${title} 10분 전`)}`,
+    "END:VALARM",
+    "BEGIN:VALARM",
+    "TRIGGER;RELATED=START:PT0M",
+    "ACTION:DISPLAY",
+    `DESCRIPTION:${escapeIcsText(`${title} 지금`)}`,
     "END:VALARM",
     "END:VEVENT",
     "END:VCALENDAR",
