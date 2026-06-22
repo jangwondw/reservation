@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title>테니스 예약</title>
+  <rect width="512" height="512" fill="#1687ff"/>
+  <rect x="92" y="92" width="328" height="328" rx="28" fill="none" stroke="#ffffff" stroke-width="26"/>
+  <path d="M256 92v328M92 256h328M160 92v328M352 92v328" fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="round" opacity=".92"/>
+  <circle cx="370" cy="142" r="34" fill="#c9ff56" stroke="#ffffff" stroke-width="12"/>
+  <path d="M348 120c18 12 31 29 39 51" fill="none" stroke="#1687ff" stroke-width="8" stroke-linecap="round"/>
+</svg>
